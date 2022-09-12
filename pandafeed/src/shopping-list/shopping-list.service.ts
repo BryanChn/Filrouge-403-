@@ -1,26 +1,57 @@
+/* eslint-disable prefer-const */
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
 import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
+import { ShoppingList } from './entities/shopping-list.entity';
 
 @Injectable()
 export class ShoppingListService {
-  create(createShoppingListDto: CreateShoppingListDto) {
-    return 'This action adds a new shoppingList';
+  async create(createShoppingListDto: CreateShoppingListDto) {
+    let shoppingList = new ShoppingList();
+    shoppingList.products = createShoppingListDto.products;
+    shoppingList.done = false;
+    shoppingList.quantity = createShoppingListDto.quantity;
+    shoppingList.date = new Date();
+    return await shoppingList.save();
+  }
+  constructor(
+    @InjectRepository(ShoppingList)
+    private shoppingListRepository: Repository<ShoppingList>,
+  ) {}
+
+  findAll(): Promise<ShoppingList[]> {
+    return this.shoppingListRepository.find();
   }
 
-  findAll() {
-    return `This action returns all shoppingList`;
+  findOne(id: number): Promise<ShoppingList> {
+    return this.shoppingListRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} shoppingList`;
-  }
+  async update(id: number, updateShoppingListDto: UpdateShoppingListDto) {
+    try {
+      let shoppingList = await ShoppingList.findOneBy({ id });
+      shoppingList.products = updateShoppingListDto.products;
+      shoppingList.done = updateShoppingListDto.done;
+      shoppingList.quantity = updateShoppingListDto.quantity;
 
-  update(id: number, updateShoppingListDto: UpdateShoppingListDto) {
-    return `This action updates a #${id} shoppingList`;
+      if (updateShoppingListDto.done) {
+        let newShoppingList = new ShoppingList();
+        newShoppingList.date = new Date();
+        newShoppingList.save();
+        shoppingList.endedDate = new Date();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   remove(id: number) {
-    return `This action removes a #${id} shoppingList`;
+    return this.shoppingListRepository.delete(id);
   }
 }

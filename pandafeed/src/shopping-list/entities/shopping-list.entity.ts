@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 @Entity()
-export class ShoppingList {
+export class ShoppingList extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,8 +11,12 @@ export class ShoppingList {
   quantity: number;
 
   @Column()
-  done: true;
+  done: boolean;
 
   @Column()
   date: Date;
+
+  @Column()
+  finishDate: Date;
+  endedDate: Date;
 }
