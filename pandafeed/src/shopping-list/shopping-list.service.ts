@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,11 +8,12 @@ import { ShoppingList } from './entities/shopping-list.entity';
 @Injectable()
 export class ShoppingListService {
   async create(createShoppingListDto: CreateShoppingListDto) {
-    let shoppingList = new ShoppingList();
-    shoppingList.products = createShoppingListDto.products;
+    const shoppingList = new ShoppingList();
+
     shoppingList.done = false;
-    shoppingList.quantity = createShoppingListDto.quantity;
+
     shoppingList.date = new Date();
+
     return await shoppingList.save();
   }
   constructor(
@@ -35,17 +35,14 @@ export class ShoppingListService {
 
   async update(id: number, updateShoppingListDto: UpdateShoppingListDto) {
     try {
-      let shoppingList = await ShoppingList.findOneBy({ id });
-      shoppingList.products = updateShoppingListDto.products;
+      const shoppingList = await ShoppingList.findOneBy({ id });
+
       shoppingList.done = updateShoppingListDto.done;
-      shoppingList.quantity = updateShoppingListDto.quantity;
 
       if (updateShoppingListDto.done) {
-        let newShoppingList = new ShoppingList();
-        newShoppingList.date = new Date();
-        newShoppingList.save();
         shoppingList.endedDate = new Date();
       }
+      return await shoppingList.save();
     } catch (e) {
       console.log(e);
     }

@@ -1,22 +1,20 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 @Entity()
 export class ShoppingList extends BaseEntity {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  products: string;
-
-  @Column()
-  quantity: number;
-
+  @ApiProperty()
   @Column()
   done: boolean;
 
+  @ApiProperty()
   @Column()
   date: Date;
 
-  @Column()
-  finishDate: Date;
-  endedDate: Date;
+  @ApiProperty()
+  @Column({ nullable: true })
+  endedDate?: Date;
 }
