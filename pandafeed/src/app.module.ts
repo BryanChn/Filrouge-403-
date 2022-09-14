@@ -6,6 +6,10 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ShoppingList } from './shopping-list/entities/shopping-list.entity';
+import { ProductsModule } from './products/products.module';
+import { ShoppingProductModule } from './shopping-product/shopping-product.module';
+import { Product } from './products/entities/product.entity';
+import { ShoppingProduct } from './shopping-product/entities/shopping-product.entity';
 
 @Module({
   imports: [
@@ -17,9 +21,11 @@ import { ShoppingList } from './shopping-list/entities/shopping-list.entity';
       username: 'root',
       password: '',
       database: 'pandafeed',
-      entities: [ShoppingList],
+      entities: [ShoppingList, Product, ShoppingProduct],
       synchronize: true,
     }),
+    ProductsModule,
+    ShoppingProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
