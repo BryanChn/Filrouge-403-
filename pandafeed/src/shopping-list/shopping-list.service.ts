@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
 import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
 import { ShoppingList } from './entities/shopping-list.entity';
@@ -9,24 +7,17 @@ import { ShoppingList } from './entities/shopping-list.entity';
 export class ShoppingListService {
   async create(createShoppingListDto: CreateShoppingListDto) {
     const shoppingList = new ShoppingList();
-
-    shoppingList.done = false;
-
     shoppingList.date = new Date();
-
+    shoppingList.done = false;
     return await shoppingList.save();
   }
-  constructor(
-    @InjectRepository(ShoppingList)
-    private shoppingListRepository: Repository<ShoppingList>,
-  ) {}
 
   findAll(): Promise<ShoppingList[]> {
-    return this.shoppingListRepository.find();
+    return ShoppingList.find();
   }
 
   findOne(id: number): Promise<ShoppingList> {
-    return this.shoppingListRepository.findOne({
+    return ShoppingList.findOne({
       where: {
         id: id,
       },
@@ -36,7 +27,7 @@ export class ShoppingListService {
   async update(id: number, updateShoppingListDto: UpdateShoppingListDto) {
     try {
       const shoppingList = await ShoppingList.findOneBy({ id });
-
+      ShoppingList;
       shoppingList.done = updateShoppingListDto.done;
 
       if (updateShoppingListDto.done) {
@@ -48,7 +39,7 @@ export class ShoppingListService {
     }
   }
 
-  remove(id: number) {
-    return this.shoppingListRepository.delete(id);
+  async remove(id: number) {
+    return await ShoppingList.delete(id);
   }
 }

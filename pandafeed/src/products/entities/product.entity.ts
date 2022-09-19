@@ -7,7 +7,7 @@ export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @ApiProperty()
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
   @ApiProperty()
