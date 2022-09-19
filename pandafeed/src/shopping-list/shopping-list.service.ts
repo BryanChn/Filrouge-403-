@@ -12,6 +12,19 @@ export class ShoppingListService {
     return await shoppingList.save();
   }
 
+  ensureShoppingList() {
+    return ShoppingList.findOneBy({ done: false }).then((shoppingList) => {
+      if (!shoppingList) {
+        const shoppingList = new ShoppingList();
+        shoppingList.date = new Date();
+        shoppingList.done = false;
+        shoppingList.products = [];
+        return shoppingList.save();
+      }
+      return shoppingList;
+    });
+  }
+
   findAll(): Promise<ShoppingList[]> {
     return ShoppingList.find();
   }
@@ -21,6 +34,7 @@ export class ShoppingListService {
       where: {
         id: id,
       },
+      // todo left join for see products in shopping list
     });
   }
 

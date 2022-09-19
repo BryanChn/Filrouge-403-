@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { ShoppingProduct } from 'src/shopping-product/entities/shopping-product.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -21,4 +28,10 @@ export class Product extends BaseEntity {
   @ApiProperty()
   @Column()
   minimum: number;
+
+  @OneToMany(
+    () => ShoppingProduct,
+    (shoppingProduct) => shoppingProduct.product,
+  )
+  shoppingLists: ShoppingProduct[];
 }

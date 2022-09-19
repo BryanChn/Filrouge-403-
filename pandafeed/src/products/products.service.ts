@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { ShoppingListService } from 'src/shopping-list/shopping-list.service';
+import { ShoppingProduct } from 'src/shopping-product/entities/shopping-product.entity';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -6,14 +8,21 @@ import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
-  async create(createProductDto: CreateProductDto) {
+  constructor(private readonly shoppingListService: ShoppingListService) {}
+
+  create(createProductDto: CreateProductDto) {
     const products = new Product();
     products.name = createProductDto.name;
     products.quantity = createProductDto.quantity;
     products.minimum = createProductDto.minimum;
     products.essential = createProductDto.essential;
     console.log(products);
-    return await products.save();
+    return products.save().then((product) => {
+      if (product.quantity <= product.minimum) {
+        return this.addToLastShoppingList(product);
+      }
+      return product;
+    });
   }
 
   findAll(): Promise<Product[]> {
@@ -28,17 +37,33 @@ export class ProductsService {
     });
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
-    const Products = await Product.findOne({
-      where: {
-        id: id,
-      },
-    });
+  update(id: number, updateProductDto: UpdateProductDto) {
+    Product.findOne({ where: { id } })
+      .then((product) => {
+        product.quantity = updateProductDto.quantity;
+        product.minimum = updateProductDto.minimum;
+        product.essential = updateProductDto.essential;
+        return product.save();
+      })
+      .then((product) => {
+        if (product.quantity <= product.minimum) {
+          return this.addToLastShoppingList(product);
+        }
+        return product;
+      });
+  }
 
-    Products.quantity = updateProductDto.quantity;
-    Products.minimum = updateProductDto.minimum;
-    Products.essential = updateProductDto.essential;
-    return await Products.save();
+  private addToLastShoppingList(product: Product) {
+    return this.shoppingListService
+      .ensureShoppingList()
+      .then((shoppingList) => {
+        const shoppingProduct = new ShoppingProduct();
+        shoppingProduct.quantity = product.minimum - product.quantity + 1;
+        shoppingProduct.product = product;
+        shoppingList.products.push(shoppingProduct);
+        return shoppingList.save();
+      })
+      .then(() => product);
   }
 
   async remove(id: number) {

@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 
 @Entity()
@@ -20,10 +21,11 @@ export class ShoppingProduct extends BaseEntity {
   @Column()
   quantity: number;
 
-  @OneToOne(() => ShoppingList)
+  @ManyToOne(() => ShoppingList, (shoppingList) => shoppingList.products, {})
   @JoinColumn()
   shoppingList: ShoppingList;
-  @OneToOne(() => Product)
+
+  @OneToOne(() => Product, (product) => product.shoppingLists)
   @JoinColumn()
-  products: Product;
+  product: Product;
 }

@@ -1,17 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from 'src/products/entities/product.entity';
 import { CreateShoppingProductDto } from './dto/create-shopping-product.dto';
 import { UpdateShoppingProductDto } from './dto/update-shopping-product.dto';
 
 @Injectable()
 export class ShoppingProductService {
-  async create() {
-    const minProduct = await Product.createQueryBuilder('minimum')
-      .where('product.min >= product.quantity')
-      .execute();
-
-    minProduct.save();
-    return;
+  create(createShoppingProductDto: CreateShoppingProductDto) {
+    return 'This action adds a new shoppingProduct';
   }
 
   findAll() {

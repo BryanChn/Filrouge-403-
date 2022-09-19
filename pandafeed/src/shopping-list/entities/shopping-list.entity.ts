@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import { ShoppingProduct } from 'src/shopping-product/entities/shopping-product.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  OneToMany,
+} from 'typeorm';
 @Entity()
 export class ShoppingList extends BaseEntity {
   @ApiProperty()
@@ -17,4 +24,11 @@ export class ShoppingList extends BaseEntity {
   @ApiProperty()
   @Column({ nullable: true })
   endedDate?: Date;
+
+  @OneToMany(
+    () => ShoppingProduct,
+    (shoppingProduct) => shoppingProduct.shoppingList,
+    { eager: true, cascade: ['insert', 'update'] },
+  )
+  products: ShoppingProduct[];
 }

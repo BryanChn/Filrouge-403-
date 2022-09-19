@@ -19,7 +19,7 @@ export class ShoppingProductController {
 
   @Post()
   create(@Body() createShoppingProductDto: CreateShoppingProductDto) {
-    return this.shoppingProductService.create();
+    return this.shoppingProductService.create(createShoppingProductDto);
   }
 
   @Get()
