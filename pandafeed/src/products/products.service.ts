@@ -38,11 +38,12 @@ export class ProductsService {
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
-    Product.findOne({ where: { id } })
+    return Product.findOne({ where: { id } })
       .then((product) => {
         product.quantity = updateProductDto.quantity;
         product.minimum = updateProductDto.minimum;
         product.essential = updateProductDto.essential;
+
         return product.save();
       })
       .then((product) => {

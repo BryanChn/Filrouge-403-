@@ -13,6 +13,7 @@ export class Product extends BaseEntity {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
+
   @ApiProperty()
   @Column({ nullable: true })
   name: string;

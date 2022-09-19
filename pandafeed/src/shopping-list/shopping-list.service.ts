@@ -11,7 +11,7 @@ export class ShoppingListService {
     shoppingList.done = false;
     return await shoppingList.save();
   }
-
+  // ensureShoppingList() is a method that returns a Promise<ShoppingList> get or create a shopping list
   ensureShoppingList() {
     return ShoppingList.findOneBy({ done: false }).then((shoppingList) => {
       if (!shoppingList) {
@@ -26,7 +26,10 @@ export class ShoppingListService {
   }
 
   findAll(): Promise<ShoppingList[]> {
-    return ShoppingList.find();
+    return ShoppingList.find({
+      relations: ['products.product'],
+      // relation used for see the products in the shopping list
+    });
   }
 
   findOne(id: number): Promise<ShoppingList> {
@@ -34,7 +37,8 @@ export class ShoppingListService {
       where: {
         id: id,
       },
-      // todo left join for see products in shopping list
+      relations: ['products.product'],
+      // relation used for see the products in the shopping list
     });
   }
 
