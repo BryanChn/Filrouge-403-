@@ -10,6 +10,15 @@ import { Product } from './entities/product.entity';
 export class ProductsService {
   constructor(private readonly shoppingListService: ShoppingListService) {}
 
+  SendAlert() {
+    return console.log('Essential product added to shopping list');
+  }
+  SendNotification() {
+    return console.log(
+      'Would you like to add this product to your shopping list?',
+    );
+  }
+
   create(createProductDto: CreateProductDto) {
     const products = new Product();
     products.name = createProductDto.name;
@@ -48,8 +57,15 @@ export class ProductsService {
       })
       .then((product) => {
         if (product.quantity <= product.minimum) {
+          if (product.essential === true) {
+            this.SendAlert();
+          }
+          if (product.essential === false) {
+            this.SendNotification();
+          }
           return this.addToLastShoppingList(product);
         }
+
         return product;
       });
   }
