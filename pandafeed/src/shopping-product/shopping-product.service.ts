@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { ProductsService } from './../products/products.service';
+import { ShoppingListService } from './../shopping-list/shopping-list.service';
 import { CreateShoppingProductDto } from './dto/create-shopping-product.dto';
 import { UpdateShoppingProductDto } from './dto/update-shopping-product.dto';
 
 @Injectable()
 export class ShoppingProductService {
+  // constructor(
+  //   private readonly shoppingListService: ShoppingListService,
+  //   private readonly productsService: ProductsService,
+  //   private readonly shoppingProductService: ShoppingProductService,
+  // ) {}
   create(createShoppingProductDto: CreateShoppingProductDto) {
     return 'This action adds a new shoppingProduct';
   }

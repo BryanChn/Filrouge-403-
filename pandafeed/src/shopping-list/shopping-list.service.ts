@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ProductsService } from './../products/products.service';
 import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
 import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
 import { ShoppingList } from './entities/shopping-list.entity';
 
 @Injectable()
 export class ShoppingListService {
+  // constructor(
+  //   private readonly shoppingListService: ShoppingListService,
+  //   private readonly productsService: ProductsService,
+  // ) {}
   async create(createShoppingListDto: CreateShoppingListDto) {
     const shoppingList = new ShoppingList();
     shoppingList.date = new Date();
