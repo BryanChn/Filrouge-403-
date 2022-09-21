@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ShoppingListService } from 'src/shopping-list/shopping-list.service';
-import { ShoppingProduct } from 'src/shopping-product/entities/shopping-product.entity';
+import { ShoppingListService } from './../shopping-list/shopping-list.service';
+import { ShoppingProduct } from './../shopping-product/entities/shopping-product.entity';
 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';

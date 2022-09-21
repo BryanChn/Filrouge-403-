@@ -756,10 +756,10 @@
     "path-to-regexp" "3.2.0"
     "swagger-ui-dist" "4.14.0"
 
-"@nestjs/testing@^9.0.0":
-  "integrity" "sha512-tT+yj3av7ZJb9Cy09C4+FoUULvzUntf81g5eK5shRVeQ35RWqr7E5Uq77B7ePUF2Er/TictVZk43d7rKq1ClNA=="
-  "resolved" "https://registry.npmjs.org/@nestjs/testing/-/testing-9.0.11.tgz"
-  "version" "9.0.11"
+"@nestjs/testing@^9.1.1":
+  "integrity" "sha512-ijphiRhJ9kTaE4cxQSrMU053pIb5uKbGUWcLnBEJ0pCa3qCPosBV/TKMt3YlL5KuOKydDRaHW04pCtXAY5Avyw=="
+  "resolved" "https://registry.npmjs.org/@nestjs/testing/-/testing-9.1.1.tgz"
+  "version" "9.1.1"
   dependencies:
     "tslib" "2.4.0"
 
