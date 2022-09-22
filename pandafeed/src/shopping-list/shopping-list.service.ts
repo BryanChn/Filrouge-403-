@@ -30,11 +30,16 @@ export class ShoppingListService {
     });
   }
 
-  findAll(): Promise<ShoppingList[]> {
-    return ShoppingList.find({
-      relations: ['products.product'],
-      // relation used for see the products in the shopping list
-    });
+  async findAll(): Promise<ShoppingList[]> {
+    // queryBuilder for only see the product with the ID of the shoppingProduct in the shopping list
+    return await ShoppingList.createQueryBuilder('ShoppingList')
+      .innerJoinAndSelect('ShoppingList.products', 'products')
+      .innerJoinAndSelect('products.product', 'product')
+      .select('ShoppingList')
+      .addSelect('products.id')
+      .addSelect('products.quantity')
+      .addSelect('product.name')
+      .getMany();
   }
 
   findOne(id: number): Promise<ShoppingList> {
