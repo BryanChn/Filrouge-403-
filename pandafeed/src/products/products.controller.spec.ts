@@ -6,8 +6,7 @@ import { Product } from './entities/product.entity';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { ShoppingListService } from './../shopping-list/shopping-list.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import axios, { Axios } from 'axios';
+import axios from 'axios';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 describe('ProductsController', () => {
@@ -63,7 +62,6 @@ describe('ProductsController', () => {
           Object.assign({ id: response.data.id }, product),
         );
         productId = response.data.id;
-        console.log(productId);
       });
   });
 
@@ -86,9 +84,6 @@ describe('ProductsController', () => {
           }
         }
         expect(res.status).toEqual(200);
-        console.log('response', res.data);
-
-        console.log(updateProduct);
       });
   });
 });

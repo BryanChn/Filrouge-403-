@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -14,13 +15,16 @@ import { ShoppingProduct } from './shopping-product/entities/shopping-product.en
 @Module({
   imports: [
     ShoppingListModule,
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
+
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3307,
-      username: 'root',
-      password: '',
-      database: 'pandafeed',
+      host: process.env.MYSQL_HOST,
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
       entities: [ShoppingList, Product, ShoppingProduct],
       synchronize: true,
     }),
