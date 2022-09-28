@@ -1,18 +1,22 @@
 import React from 'react';
-import {
-  Button,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import Logo from '../../assets/PandaFEED.png';
 import LinearGradient from 'react-native-linear-gradient';
 
-const Home = () => {
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthRootParamList} from '../../App';
+import {Button} from '@react-native-material/core';
+import {ScrollView} from 'react-native-gesture-handler';
+
+type ScreenNavigationProp = NativeStackNavigationProp<AuthRootParamList>;
+
+type Props = {
+  navigation: ScreenNavigationProp;
+};
+
+const Home = ({navigation}: Props) => {
   return (
-    <SafeAreaView style={styles.background}>
+    <ScrollView style={styles.background}>
       <LinearGradient
         colors={['#79F1a4', '#382933']}
         start={{
@@ -43,13 +47,23 @@ const Home = () => {
           been added. If the product is non-essential then a notification will
           ask you for permission to add this product to your shoppingList.
         </Text>
-        <Button title="Start" />
+        <Button
+          style={styles.button}
+          color="#79F1a4"
+          tintColor="black"
+          variant="contained"
+          onPress={() => navigation.navigate('Products')}
+          title="Start add your Product !"
+        />
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  button: {
+    marginTop: 20,
+  },
   background: {
     backgroundColor: '#382933',
   },

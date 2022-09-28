@@ -1,26 +1,27 @@
-import React from 'react';
+import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+
 import Home from './src/Screens/Home';
 import ShoppingList from './src/Features/ShoppingList/ShoppingList';
+import Products from './src/Features/Products/Products';
+
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 
 export type AuthRootParamList = {
   Home: undefined;
   ShoppingList: undefined;
+  Products: undefined;
 };
 
-const Stack = createNativeStackNavigator<AuthRootParamList>();
+const BottomTab = createMaterialBottomTabNavigator<AuthRootParamList>();
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="ShoppingList" component={ShoppingList} />
-      </Stack.Navigator>
+      <BottomTab.Navigator initialRouteName="Home">
+        <BottomTab.Screen name="Home" component={Home} />
+        <BottomTab.Screen name="ShoppingList" component={ShoppingList} />
+        <BottomTab.Screen name="Products" component={Products} />
+      </BottomTab.Navigator>
     </NavigationContainer>
   );
 };
