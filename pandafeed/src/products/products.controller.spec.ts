@@ -90,9 +90,9 @@ describe('ProductsController', () => {
 
     axios.get('http://localhost:3000/shopping-list').then((res) => {
       expect(res.status).toEqual(200);
-      find(res.data, (product: { id: number }) => {
-        expect(product.id).toEqual(productId);
-      });
+      expect(
+        res.data[0].products.find((item: Product) => item.id === productId),
+      ).toBeTruthy();
     });
   });
 });
