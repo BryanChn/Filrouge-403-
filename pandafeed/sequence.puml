@@ -1,0 +1,32 @@
+@startuml sequence 
+    participant  "Products"  as  Products
+    participant  "ShoppingList"  as  ShoppingList    
+    control  "System"  as  system
+    database "DataBase" as Db
+    alt Products if is less than quantity minimum and essential
+        Products -> system : send alert "product added to your shoppinglist"
+        system -> Db : update stock
+        system -> ShoppingList : add product
+        else Product is not essential 
+        Products -> system : send notification "would you like to add this product to your shoppinglist?"
+         system -> Db : update stock
+         alt if yes 
+            system -> ShoppingList : add product
+
+            
+         end
+       
+    end
+    Products -> ShoppingList : addProduct()
+    ShoppingList -> system : addProduct()
+    system -> Db : addProduct()
+    
+
+    
+   
+   
+   
+     @enduml
+
+
+

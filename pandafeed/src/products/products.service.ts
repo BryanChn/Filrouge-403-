@@ -69,6 +69,26 @@ export class ProductsService {
         return product;
       });
   }
+  updateQuantity(id: number, updateProductDto: UpdateProductDto) {
+    return Product.findOne({ where: { id } })
+      .then((product) => {
+        product.quantity = updateProductDto.quantity;
+        return product.save();
+      })
+      .then((product) => {
+        if (product.quantity <= product.minimum) {
+          if (product.essential === true) {
+            this.SendAlert();
+          }
+          if (product.essential === false) {
+            this.SendNotification();
+          }
+          return this.addToLastShoppingList(product);
+        }
+
+        return product;
+      });
+  }
 
   private addToLastShoppingList(product: Product) {
     return this.shoppingListService

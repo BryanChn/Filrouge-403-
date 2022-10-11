@@ -8,6 +8,7 @@ import { ProductsService } from './products.service';
 import { ShoppingListService } from './../shopping-list/shopping-list.service';
 import axios from 'axios';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { find } from 'rxjs';
 
 describe('ProductsController', () => {
   let productController: ProductsController;
@@ -65,13 +66,14 @@ describe('ProductsController', () => {
       });
   });
 
-  it('should update product and add shopping list ', async () => {
+  it('should update all the  product and add shopping list ', async () => {
     const updateProduct = new UpdateProductDto();
     updateProduct.quantity = 0;
     updateProduct.minimum = 1;
     updateProduct.essential = true;
     await axios
       .patch('http://localhost:3000/products/' + productId, updateProduct)
+
       .then((res) => {
         if (updateProduct.quantity <= updateProduct.minimum) {
           if (updateProduct.essential === true) {
@@ -85,5 +87,12 @@ describe('ProductsController', () => {
         }
         expect(res.status).toEqual(200);
       });
+
+    axios.get('http://localhost:3000/shopping-list').then((res) => {
+      expect(res.status).toEqual(200);
+      find(res.data, (product: { id: number }) => {
+        expect(product.id).toEqual(productId);
+      });
+    });
   });
 });
