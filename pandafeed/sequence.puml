@@ -1,8 +1,12 @@
 @startuml sequence 
+    participant "User" as User 
     participant  "Products"  as  Products
-    participant  "ShoppingList"  as  ShoppingList    
+    participant  "ShoppingList"  as  ShoppingList   
+    
     control  "System"  as  system
     database "DataBase" as Db
+    User -> Products : eat product
+    
     alt Products if is less than quantity minimum and essential
         Products -> system : send alert "product added to your shoppinglist"
         system -> Db : update stock

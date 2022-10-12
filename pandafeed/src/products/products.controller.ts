@@ -41,7 +41,11 @@ export class ProductsController {
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    return this.productsService.updateQuantity(+id, updateProductDto);
+    return this.productsService.updateQuantity(
+      +id,
+
+      updateProductDto,
+    );
   }
 
   @Delete(':id')

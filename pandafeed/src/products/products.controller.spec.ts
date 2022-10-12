@@ -64,13 +64,8 @@ describe('ProductsController', () => {
         );
         productId = response.data.id;
       });
-  });
-
-  it('should update all the  product and add shopping list ', async () => {
-    const updateProduct = new UpdateProductDto();
+    const updateProduct = product;
     updateProduct.quantity = 0;
-    updateProduct.minimum = 1;
-    updateProduct.essential = true;
     await axios
       .patch('http://localhost:3000/products/' + productId, updateProduct)
 
@@ -87,7 +82,6 @@ describe('ProductsController', () => {
         }
         expect(res.status).toEqual(200);
       });
-
     axios.get('http://localhost:3000/shopping-list').then((res) => {
       expect(res.status).toEqual(200);
       expect(
