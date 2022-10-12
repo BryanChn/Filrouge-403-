@@ -7,8 +7,6 @@ import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
 import { ShoppingListService } from './../shopping-list/shopping-list.service';
 import axios from 'axios';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { find } from 'rxjs';
 
 describe('ProductsController', () => {
   let productController: ProductsController;
@@ -38,7 +36,7 @@ describe('ProductsController', () => {
     productService = module.get<ProductsService>(ProductsService);
   });
 
-  it('should return a list of products', async () => {
+  it('should add product , update and add to the shoppinglist if minimal is <=', async () => {
     jest.setTimeout(30000);
     const product = {
       name: 'test2',
@@ -46,12 +44,6 @@ describe('ProductsController', () => {
       minimum: 1,
       essential: true,
     };
-    const creatProduct = new Product();
-
-    creatProduct.name = product.name;
-    creatProduct.quantity = product.quantity;
-    creatProduct.minimum = product.minimum;
-    creatProduct.essential = product.essential;
 
     await axios
       .post('http://localhost:3000/products', product)
