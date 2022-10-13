@@ -1,0 +1,6 @@
+{
+  "eslint.alwaysShowStatus": true,
+  "prettier.bracketSameLine": false,
+  "editor.suggestLineHeight": 0,
+  "editor.formatOnSaveMode": "file"
+}

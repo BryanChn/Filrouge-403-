@@ -17,7 +17,10 @@ const BottomTab = createMaterialBottomTabNavigator<AuthRootParamList>();
 const App = () => {
   return (
     <NavigationContainer>
-      <BottomTab.Navigator initialRouteName="Home">
+      <BottomTab.Navigator
+        initialRouteName="Home"
+        barStyle={{backgroundColor: '#382933'}}
+        activeColor="#79F1a4">
         <BottomTab.Screen name="Home" component={Home} />
         <BottomTab.Screen name="ShoppingList" component={ShoppingList} />
         <BottomTab.Screen name="Products" component={Products} />
