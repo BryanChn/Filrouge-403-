@@ -1,14 +1,10 @@
-import { Global, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ShoppingListService } from './shopping-list.service';
 import { ShoppingListController } from './shopping-list.controller';
-import { ShoppingList } from './entities/shopping-list.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductsService } from '../products/products.service';
 
-@Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([ShoppingList])],
   controllers: [ShoppingListController],
-  providers: [ShoppingListService],
-  exports: [ShoppingListService],
+  providers: [ShoppingListService, ProductsService],
 })
 export class ShoppingListModule {}

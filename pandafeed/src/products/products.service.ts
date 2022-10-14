@@ -19,19 +19,19 @@ export class ProductsService {
     );
   }
 
-  create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto) {
     const products = new Product();
     products.name = createProductDto.name;
     products.quantity = createProductDto.quantity;
     products.minimum = createProductDto.minimum;
     products.essential = createProductDto.essential;
-    console.log(products);
-    return products.save().then((product) => {
-      if (product.quantity <= product.minimum) {
-        return this.addToLastShoppingList(product);
-      }
-      return product;
-    });
+
+    const newProduct = await products.save();
+
+    if (newProduct.quantity <= newProduct.minimum) {
+      return await this.addToLastShoppingList(newProduct);
+    }
+    return newProduct;
   }
 
   findAll(): Promise<Product[]> {
@@ -41,82 +41,63 @@ export class ProductsService {
   findOne(id: number): Promise<Product> {
     return Product.findOne({
       where: {
-        id: id,
+        id,
       },
     });
   }
 
-  // // if user take 2 products from the fridge, the quantity of the product will be updated wih the new quantity
-  // async takeProduct(id: number, quantity: number) {
-  //   const product = await this.findOne(id);
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    let product = await Product.findOneBy({ id });
 
-  //   return product.save();
-  // }
+    product.quantity =
+      product.quantity - updateProductDto.quantity < 0
+        ? 0
+        : product.quantity - updateProductDto.quantity;
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return Product.findOne({ where: { id } })
-      .then((product) => {
-        product.quantity =
-          product.quantity - updateProductDto.quantity < 0
-            ? 0
-            : product.quantity - updateProductDto.quantity;
-        product.minimum = updateProductDto.minimum
-          ? updateProductDto.minimum
-          : product.minimum;
+    product.essential = updateProductDto.essential
+      ? updateProductDto.essential
+      : product.essential;
 
-        product.essential = updateProductDto.essential
-          ? updateProductDto.essential
-          : product.essential;
-        console.log(product);
+    product = await product.save();
 
-        return product.save();
-      })
-      .then((product) => {
-        if (product.quantity <= product.minimum) {
-          if (product.essential === true) {
-            this.SendAlert();
-          }
-          if (product.essential === false) {
-            this.SendNotification();
-          }
-          return this.addToLastShoppingList(product);
-        }
+    if (product.quantity <= product.minimum) {
+      if (product.essential === true) {
+        this.SendAlert();
+      }
+      if (product.essential === false) {
+        this.SendNotification();
+      }
 
-        return product;
-      });
-  }
-  updateQuantity(id: number, updateProductDto: UpdateProductDto) {
-    return Product.findOne({ where: { id } })
-      .then((product) => {
-        product.quantity = updateProductDto.quantity;
-        return product.save();
-      })
-      .then((product) => {
-        if (product.quantity <= product.minimum) {
-          if (product.essential === true) {
-            this.SendAlert();
-          }
-          if (product.essential === false) {
-            this.SendNotification();
-          }
-          return this.addToLastShoppingList(product);
-        }
+      return await this.addToLastShoppingList(product);
+    }
 
-        return product;
-      });
+    return product;
   }
 
-  private addToLastShoppingList(product: Product) {
-    return this.shoppingListService
-      .ensureShoppingList()
-      .then((shoppingList) => {
-        const shoppingProduct = new ShoppingProduct();
-        shoppingProduct.quantity = product.minimum - product.quantity + 1;
-        shoppingProduct.product = product;
-        shoppingList.products.push(shoppingProduct);
-        return shoppingList.save();
-      })
-      .then(() => product);
+  private async addToLastShoppingList(product: Product) {
+    const shoppingList = await this.shoppingListService.ensureShoppingList();
+
+    let shoppingProduct = await ShoppingProduct.findOne({
+      where: {
+        product: {
+          id: product.id,
+        },
+      },
+    });
+
+    if (!shoppingProduct) {
+      shoppingProduct = new ShoppingProduct();
+    }
+
+    shoppingProduct.quantity = product.minimum - product.quantity + 1;
+    shoppingProduct.product = product;
+
+    const newShoppingProduct = await shoppingProduct.save();
+
+    shoppingList.products.push(newShoppingProduct);
+
+    await shoppingList.save();
+    return newShoppingProduct;
   }
 
   async remove(id: number) {

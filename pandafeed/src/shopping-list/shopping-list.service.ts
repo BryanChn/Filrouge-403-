@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ProductsService } from './../products/products.service';
+import { Product } from 'src/products/entities/product.entity';
+import { ShoppingProduct } from 'src/shopping-product/entities/shopping-product.entity';
 import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
 import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
 import { ShoppingList } from './entities/shopping-list.entity';
 
 @Injectable()
 export class ShoppingListService {
-  // constructor(
-  //   private readonly shoppingListService: ShoppingListService,
-  //   private readonly productsService: ProductsService,
-  // ) {}
   async create(createShoppingListDto: CreateShoppingListDto) {
     const shoppingList = new ShoppingList();
     shoppingList.date = new Date();
@@ -18,7 +15,16 @@ export class ShoppingListService {
   }
   // ensureShoppingList() is a method that returns a Promise<ShoppingList> get or create a shopping list
   ensureShoppingList() {
-    return ShoppingList.findOneBy({ done: false }).then((shoppingList) => {
+    return ShoppingList.findOne({
+      where: {
+        done: false,
+      },
+      relations: {
+        products: {
+          product: true,
+        },
+      },
+    }).then((shoppingList) => {
       if (!shoppingList) {
         const shoppingList = new ShoppingList();
         shoppingList.date = new Date();
@@ -31,21 +37,34 @@ export class ShoppingListService {
   }
 
   async findAll(): Promise<ShoppingList[]> {
-    // queryBuilder for only see the product with the ID of the shoppingProduct in the shopping list
-    return await ShoppingList.createQueryBuilder('ShoppingList')
-      .innerJoinAndSelect('ShoppingList.products', 'products')
-      .innerJoinAndSelect('products.product', 'product')
-      .select('ShoppingList')
-      .addSelect('products.id')
-      .addSelect('products.quantity')
-      .addSelect('product.name')
-      .getMany();
+    return await ShoppingList.find({
+      select: {
+        products: {
+          product: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      relations: {
+        products: {
+          product: true,
+        },
+      },
+      order: {
+        products: {
+          product: {
+            id: 'ASC',
+          },
+        },
+      },
+    });
   }
 
   findOne(id: number): Promise<ShoppingList> {
     return ShoppingList.findOne({
       where: {
-        id: id,
+        id,
       },
       relations: ['products.product'],
       // relation used for see the products in the shopping list
@@ -54,13 +73,29 @@ export class ShoppingListService {
 
   async update(id: number, updateShoppingListDto: UpdateShoppingListDto) {
     try {
-      const shoppingList = await ShoppingList.findOneBy({ id });
-      ShoppingList;
+      const shoppingList = await ShoppingList.findOne({
+        where: {
+          id,
+        },
+        relations: {
+          products: {
+            product: true,
+          },
+        },
+      });
+
       shoppingList.done = updateShoppingListDto.done;
 
       if (updateShoppingListDto.done) {
         shoppingList.endedDate = new Date();
+        shoppingList.products.forEach(async (ProductAdded: ShoppingProduct) => {
+          console.log('je suis la hello', ProductAdded);
+
+          ProductAdded.product.quantity += ProductAdded.quantity;
+          await ProductAdded.product.save();
+        });
       }
+
       return await shoppingList.save();
     } catch (e) {
       console.log(e);

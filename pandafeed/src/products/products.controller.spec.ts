@@ -40,8 +40,8 @@ describe('ProductsController', () => {
     jest.setTimeout(30000);
     const product = {
       name: 'test2',
-      quantity: 2,
-      minimum: 1,
+      quantity: 20,
+      minimum: 2,
       essential: true,
     };
 
@@ -57,7 +57,7 @@ describe('ProductsController', () => {
         productId = response.data.id;
       });
     const updateProduct = product;
-    updateProduct.quantity = 0;
+    updateProduct.quantity = 19;
     await axios
       .patch('http://localhost:3000/products/' + productId, updateProduct)
 
@@ -74,11 +74,23 @@ describe('ProductsController', () => {
         }
         expect(res.status).toEqual(200);
       });
-    axios.get('http://localhost:3000/shopping-list').then((res) => {
+    await axios.get('http://localhost:3000/shopping-list').then((res) => {
       expect(res.status).toEqual(200);
-      expect(
-        res.data[0].products.find((item: Product) => item.id === productId),
-      ).toBeTruthy();
+      res.data.forEach((shopingList: any) => {
+        if (!shopingList.done) {
+          expect(
+            shopingList.products.find((item: any) => {
+              return item.product.id === productId;
+            }),
+          ).toBeTruthy();
+        }
+      });
     });
+    await axios
+      .get('http://localhost:3000/products/' + productId)
+      .then((res) => {
+        expect(res.status).toEqual(200);
+        expect(res.data.quantity).toEqual(1);
+      });
   });
 });

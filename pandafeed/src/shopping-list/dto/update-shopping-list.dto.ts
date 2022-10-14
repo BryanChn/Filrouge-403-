@@ -1,9 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { ShoppingListProduct } from 'src/products/dto/shopping-list-product.dto';
 import { CreateShoppingListDto } from './create-shopping-list.dto';
 
 export class UpdateShoppingListDto extends PartialType(CreateShoppingListDto) {
-  products: string;
+  products: ShoppingListProduct[];
   done: boolean;
-  quantity: number;
   date: Date;
 }
