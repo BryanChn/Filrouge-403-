@@ -1,36 +1,76 @@
-@startuml sequence 
-    participant "User" as User 
-    participant  "Products"  as  Products
-    participant  "ShoppingList"  as  ShoppingList   
-    
-    control  "System"  as  system
-    database "DataBase" as Db
-    User -> Products : eat product
-    
-    alt Products if is less than quantity minimum and essential
-        Products -> system : send alert "product added to your shoppinglist"
-        system -> Db : update stock
-        system -> ShoppingList : add product
-        else Product is not essential 
-        Products -> system : send notification "would you like to add this product to your shoppinglist?"
-         system -> Db : update stock
-         alt if yes 
-            system -> ShoppingList : add product
+@startuml pandafeed
+actor user as user
+participant app as app
+control server as server
+database database as bdd
 
-            
-         end
-       
-    end
-    Products -> ShoppingList : addProduct()
-    ShoppingList -> system : addProduct()
-    system -> Db : addProduct()
-    
+group add product
+user -> app : send a new product \n(name, quantity, minimal quantity, essential: true/false)
+app -> server : construct object before add to database
+server -> bdd : write new object (product) in product table
+bdd -> server : return if object is added
+server -> app : send message to confirm if object added
+app -> user : display dialog box for to confirm if object added
+end
 
-    
-   
-   
-   
-     @enduml
+group eat product
+user -> app : select and update product with the eaten quantity
+app -> server : send product information updated
+server -> bdd : retrieve product information 
+bdd -> server : send product information
+alt if eaten quantity <= quantity
+server -> server : remove eaten quantity of quantity
+alt if essential is true
+alt if minimal quantity >= quantity
+server -> bdd : send update product
+bdd -> server : return OK
+server -> app : send message \n product is updated
+app -> user : display message \n this product has been updated
+else if minimal quantity < quantity
+server -> bdd : send update product
+bdd -> server : return OK
+server -> bdd : send to shopping list the number of quantity for minimum quantity = quantity
+bdd -> server : return quantity of product added in shopping list
+server -> app : send message \n this product has been added in your shopping list \n(quantity added)
+app -> user : display message with quantity added
+end
+else if essential is false
+alt if minimal quantity >= quantity
+server -> bdd : send update product
+bdd -> server : return OK 
+server -> app : send message \n product is updated
+app -> user : display message \n this product has been updated
+else if minimal quantity < quantity
+server -> bdd : send update product
+bdd -> server : return OK
+server -> app : send message \n minimal quantity of product is less than quantity\n this product isn't essential
+app -> user : display message with choice \n convert in essential product ? Add product to the shopping List?
+user -> app : send response 
+alt if user choose "add product to the shopping list"
+app -> server : retrieve response of user
+server -> bdd : add minimal quantity in shopping List
+alt if user choose "convert in essential product"
+server -> bdd : update product \n(change essential false in true)   
+bdd -> server : Return Ok 
+server -> app : send message \n Product is added in shopping list with quantity \n And product is essential
+app -> user : Display message 
+else if no change essential product (false)
+server -> app : send message \n Product is added in shopping list with quantity
+app -> user : Display message
+end
+else if user choose "not add product to the shopping list"
+server -> dbb : delete product in product table
+bdd -> server : return Ok
+server -> app : send message \n product has been remove to product List
+app -> user : Display message
+end
+end
+end
 
-
+end
+else if eaten quantity > quantity
+server -> app : send error message \n (don't eating more of quantity)
+app -> user : display error message 
+end
+@enduml
 

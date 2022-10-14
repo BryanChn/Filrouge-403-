@@ -46,12 +46,28 @@ export class ProductsService {
     });
   }
 
+  // // if user take 2 products from the fridge, the quantity of the product will be updated wih the new quantity
+  // async takeProduct(id: number, quantity: number) {
+  //   const product = await this.findOne(id);
+
+  //   return product.save();
+  // }
+
   update(id: number, updateProductDto: UpdateProductDto) {
     return Product.findOne({ where: { id } })
       .then((product) => {
-        product.quantity = updateProductDto.quantity;
-        product.minimum = updateProductDto.minimum;
-        product.essential = updateProductDto.essential;
+        product.quantity =
+          product.quantity - updateProductDto.quantity < 0
+            ? 0
+            : product.quantity - updateProductDto.quantity;
+        product.minimum = updateProductDto.minimum
+          ? updateProductDto.minimum
+          : product.minimum;
+
+        product.essential = updateProductDto.essential
+          ? updateProductDto.essential
+          : product.essential;
+        console.log(product);
 
         return product.save();
       })
