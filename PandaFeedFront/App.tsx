@@ -6,6 +6,7 @@ import ShoppingList from './src/Features/ShoppingList/ShoppingList';
 import Products from './src/Features/Products/Products';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {Text} from 'react-native';
 
 export type AuthRootParamList = {
   Home: undefined;
@@ -19,8 +20,11 @@ const App = () => {
     <NavigationContainer>
       <BottomTab.Navigator
         initialRouteName="Home"
-        barStyle={{backgroundColor: '#382933'}}
-        activeColor="#95D793">
+        barStyle={{backgroundColor: '#282c34', height: 60}}
+        activeColor="#95D793"
+        inactiveColor="lightgray"
+        shifting={true}
+        labeled={false}>
         <BottomTab.Screen
           name="Home"
           component={Home}
@@ -47,7 +51,7 @@ const App = () => {
           name="Products"
           component={Products}
           options={{
-            tabBarIcon: ({color}) => (
+            tabBarIcon: ({color = 'red'}) => (
               <MaterialCommunityIcons name="baguette" size={25} color={color} />
             ),
           }}

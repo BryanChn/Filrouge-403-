@@ -18,7 +18,7 @@ const Home = ({navigation}: Props) => {
   return (
     <ScrollView style={styles.background}>
       <LinearGradient
-        colors={['#79F1a4', '#382933']}
+        colors={['#95D793', '#282C34']}
         start={{
           x: 0,
           y: 2,
@@ -49,7 +49,7 @@ const Home = ({navigation}: Props) => {
         </Text>
         <Button
           style={styles.button}
-          color="#79F1a4"
+          color="#95D793"
           tintColor="black"
           variant="contained"
           onPress={() => navigation.navigate('Products')}
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   background: {
-    backgroundColor: '#382933',
+    backgroundColor: '#282c34',
   },
   root: {
     alignItems: 'center',
