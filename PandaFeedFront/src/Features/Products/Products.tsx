@@ -17,7 +17,6 @@ import Logo from '../../../assets/PandaFEED.png';
 import {ButtonGroup, Divider} from 'react-native-elements';
 import {Button} from 'react-native-elements';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AddProductModal from '../../component/AddProductModal';
 import CustomInput from '../../component/CustomInput';
 
 export interface Products {
@@ -35,9 +34,15 @@ export interface AddProduct {
   essential: boolean;
 }
 
+const ProductData: AddProduct = {
+  name: '',
+  quantity: 0,
+  minimum: 0,
+  essential: false || true,
+};
+
 const Products = () => {
-  const [products, setProducts] = useState<Products[]>();
-  const [addProduct, setAddProduct] = useState<AddProduct>();
+  const [products, setProducts] = useState<Products[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
 
   // get products from api
@@ -56,16 +61,23 @@ const Products = () => {
   // add products to list
   const postProduct = () => {
     try {
-      axios
-        .post('http:10.8.251.124:3000/products', addProduct)
-        .then(response => {
-          response.data;
-        });
+      axios.post('http:10.8.251.124:3000/products', ProductData).then(resp => {
+        if (resp.status === 201) {
+          Alert.alert('Product added !');
+          setProducts([...products, resp.data]);
+        } else {
+          Alert.alert('something goes wrong');
+        }
+      });
     } catch (error) {
       console.log('oups error notified------', error);
     }
+    console.log('ProductData', ProductData);
   };
-
+  const submitDataProduct = () => {
+    postProduct();
+    setModalVisible(!modalVisible);
+  };
   return (
     <ScrollView style={styles.background}>
       <LinearGradient
@@ -114,6 +126,7 @@ const Products = () => {
         icon={<MaterialCommunityIcons name="plus" />}></Button>
       <View style={styles.centeredView}>
         <Modal
+          statusBarTranslucent={true}
           animationType="slide"
           transparent={true}
           visible={modalVisible}
@@ -121,22 +134,53 @@ const Products = () => {
             setModalVisible(!modalVisible);
           }}>
           <View style={styles.centeredView}>
-            <ScrollView style={styles.modalView}>
+            <View style={styles.modalView}>
               <Text style={styles.textTitle}>Add product</Text>
-              <Text style={styles.modalText}>Name</Text>
-              <CustomInput />
-              <Text style={styles.modalText}>Quantity</Text>
-              <CustomInput />
-              <Text style={styles.modalText}>Minimum</Text>
-              <CustomInput />
-              <Text style={styles.modalText}>Essential</Text>
-              <CustomInput />
+
+              <CustomInput
+                placeholder="Name"
+                setValue={(text: string) => (ProductData.name = text)}
+                onChangeText={(text: string) => {
+                  ProductData.name = text;
+                }}
+              />
+
+              <CustomInput
+                placeholder="Quantity"
+                setValue={(value: number) => (ProductData.quantity = value)}
+                onChangeText={(value: number) => {
+                  ProductData.quantity = value;
+                }}
+              />
+
+              <CustomInput
+                placeholder="Minimum"
+                setValue={(value: number) => (ProductData.minimum = value)}
+                onChangeText={(value: number) => {
+                  ProductData.minimum = value;
+                }}
+              />
+
+              <CustomInput
+                placeholder="Essential, true or false"
+                setvalue={(text: boolean) => (ProductData.essential = text)}
+                onChangeText={(text: boolean) => {
+                  ProductData.essential = text;
+                }}
+              />
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}>
                 <Text style={styles.textStyle}>Close</Text>
               </Pressable>
-            </ScrollView>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => {
+                  submitDataProduct();
+                }}>
+                <Text style={styles.textStyle}>Add</Text>
+              </Pressable>
+            </View>
           </View>
         </Modal>
       </View>
@@ -150,13 +194,16 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     marginTop: 120,
-    marginBottom: 100,
+    marginBottom: 160,
+    paddingBottom: 200,
+    paddingLeft: 50,
+    alignContent: 'center',
+    width: '100%',
+    height: '100%',
   },
   modalView: {
-    width: '70%',
-    height: 10,
+    width: '80%',
     margin: 10,
     backgroundColor: '#282c34',
     borderRadius: 20,
@@ -165,11 +212,11 @@ const styles = StyleSheet.create({
     padding: 15,
     shadowColor: '#95D793',
     elevation: 10,
-    flex: 1,
   },
   button: {
     borderRadius: 20,
     padding: 10,
+
     elevation: 2,
   },
   buttonOpen: {

@@ -1,6 +1,18 @@
 import React, {Component} from 'react';
-import {Text, View, TextInput, StyleSheet} from 'react-native';
-const CustomInput = ({value, setValue, placeholder, secureTextEntry}: any) => {
+import {
+  Text,
+  View,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+} from 'react-native';
+const CustomInput = ({
+  value,
+  setValue,
+  placeholder,
+  secureTextEntry,
+  onChangeText,
+}: any) => {
   return (
     <View style={styles.container}>
       <TextInput

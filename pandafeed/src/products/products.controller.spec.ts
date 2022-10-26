@@ -39,7 +39,7 @@ describe('ProductsController', () => {
   it('should add product , update and add to the shoppinglist if minimal is <=', async () => {
     jest.setTimeout(30000);
     const product = {
-      name: 'test2',
+      name: 'DanyPasContent',
       quantity: 20,
       minimum: 2,
       essential: true,
@@ -57,7 +57,9 @@ describe('ProductsController', () => {
         productId = response.data.id;
       });
     const updateProduct = product;
+
     updateProduct.quantity = 19;
+
     await axios
       .patch('http://localhost:3000/products/' + productId, updateProduct)
 
